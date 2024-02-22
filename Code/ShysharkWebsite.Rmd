@@ -6,9 +6,32 @@ output: html_document
 ---
 
 This is the distribution of shysharks around southern Africa. 
-This map shows puffadder shyshark (*Haploblepharus edwardsii*) observations in green, brown shyshark (*Haploblepharus fuscus*) observations in blue, and dark shyshark (*Haploblepharus pictus*) observations in purple. 
+This map shows puffadder shyshark (*Haploblepharus edwardsii*) observations in green, brown shyshark (*Haploblepharus fuscus*) observations in blue, and dark shyshark (*Haploblepharus pictus*) observations in purple.
 
 ~~Please excuse me while I butcher this until I figure it out~~
+
+```{r call packages, message=TRUE, warning=FALSE, paged.print=FALSE}
+#install.packages(c("tidyverse", "sp", "raster", "sf", "lwgeom", "terra", "stars", "exactextractr"))
+#install.packages("hrbrthemes", "rinat", "prettymapr")
+#library(tidyverse)
+#library(sp)
+#library(sf)
+#library(raster)
+#library(lwgeom)
+#library(terra)
+#library(stars)
+#library(exactextractr)
+#library(hrbrthemes)
+#library(rinat)
+#library(prettymapr)
+#library(ggspatial)
+#library(leaflet)
+#library(mapview)
+#library(htmltools)
+
+my_packages <- c("tidyverse", "sp", "sf", "raster", "lwgeom", "terra", "stars", "exactextractr", "hrbrthemes", "rinat", "prettymapr", "ggspatial", "leaflet", "mapview", "htmltools")
+lapply(my_packages, require, character.only = TRUE)
+```
 
 ### Reading in data from iNaturalist
 ```{r dataframes, message=TRUE, warning=FALSE, paged.print=FALSE}
@@ -102,18 +125,18 @@ leaflet() %>%
 
 ### Different interactive maps
 ```{r mapview, echo=FALSE, include=TRUE, message=TRUE, warning=FALSE, paged.print=FALSE}
-mapview(puffyshark, 
-        popup = 
-          popupTable(puffyshark, 
-                     zcol = c("user_login", "url")))
-mapview(brownshark, 
-        popup = 
-          popupTable(brownshark, 
-                     zcol = c("user_login", "url")))
-mapview(darkshark, 
-        popup = 
-          popupTable(darkshark,
-                     zcol = c("user_login", "url")))
+#mapview(puffyshark, 
+        #popup = 
+         # popupTable(puffyshark, 
+                    # zcol = c("user_login", "url")))
+#mapview(brownshark, 
+      #  popup = 
+        #  popupTable(brownshark, 
+                 #    zcol = c("user_login", "url")))
+#mapview(darkshark, 
+      #  popup = 
+        #  popupTable(darkshark,
+               #      zcol = c("user_login", "url")))
 ```
 
 ```{r setup, include=FALSE}
