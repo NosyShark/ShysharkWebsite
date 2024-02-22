@@ -18,7 +18,7 @@ tidyverse, sp, sf, raster, lwgeom, terra, stars, exactextractr, hrbrthemes, rina
 #install.packages(c("tidyverse", "sp", "raster", "sf", "lwgeom", "terra", "stars", "exactextractr"))
 #install.packages("hrbrthemes", "rinat", "prettymapr")
 ```
-```{r load packages, message=False, warning=FALSE, include=FALSE, paged.print=FALSE}
+```{r load packages, message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
 my_packages <- c("tidyverse", "sp", "sf", "raster", "lwgeom", "terra", "stars", "exactextractr", "hrbrthemes", "rinat", "prettymapr", "ggspatial", "leaflet", "mapview", "htmltools")
 lapply(my_packages, require, character.only = TRUE)
 ```
