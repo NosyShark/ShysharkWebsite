@@ -8,27 +8,17 @@ output: html_document
 This is the distribution of shysharks around southern Africa. 
 This map shows puffadder shyshark (*Haploblepharus edwardsii*) observations in green, brown shyshark (*Haploblepharus fuscus*) observations in blue, and dark shyshark (*Haploblepharus pictus*) observations in purple.
 
+Note that you need to install and load these packages:
+tidyverse, sp, sf, raster, lwgeom, terra, stars, exactextractr, hrbrthemes, rinat, prettymapr, ggspatial, leaflet, mapview, htmltools
+
 ~~Please excuse me while I butcher this until I figure it out~~
 
-```{r call packages, message=TRUE, warning=FALSE, paged.print=FALSE}
+
+```{r call packages, message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
 #install.packages(c("tidyverse", "sp", "raster", "sf", "lwgeom", "terra", "stars", "exactextractr"))
 #install.packages("hrbrthemes", "rinat", "prettymapr")
-#library(tidyverse)
-#library(sp)
-#library(sf)
-#library(raster)
-#library(lwgeom)
-#library(terra)
-#library(stars)
-#library(exactextractr)
-#library(hrbrthemes)
-#library(rinat)
-#library(prettymapr)
-#library(ggspatial)
-#library(leaflet)
-#library(mapview)
-#library(htmltools)
-
+```
+```{r load packages, message=False, warning=FALSE, include=FALSE, paged.print=FALSE}
 my_packages <- c("tidyverse", "sp", "sf", "raster", "lwgeom", "terra", "stars", "exactextractr", "hrbrthemes", "rinat", "prettymapr", "ggspatial", "leaflet", "mapview", "htmltools")
 lapply(my_packages, require, character.only = TRUE)
 ```
@@ -61,8 +51,8 @@ class(brownshark)
 class(darkshark)
 ```
 
-### Plot these bois
-```{r plot, echo=FALSE, include=TRUE, warning=FALSE, paged.print=FALSE}
+
+```{r plot individual, eval=FALSE, message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
 ggplot() + 
   annotation_map_tile(type = "osm", progress = "none") + 
   geom_sf(data = puffyshark, color = "#85B22C")
@@ -74,8 +64,8 @@ ggplot() +
   geom_sf(data = darkshark, color = "#422CB2")
 ```
 
-### Let's try overlay these data
-```{r plot overlay, include=TRUE, message=TRUE, warning=FALSE, paged.print=FALSE}
+### Let's try overlay and plot these data
+```{r plot overlay, echo=TRUE, message=TRUE, warning=FALSE, paged.print=FALSE}
 ggplot() + 
   annotation_map_tile(type = "osm", progress = "none") + 
   geom_sf(data = puffyshark, color = "#85B22C") + 
@@ -84,7 +74,7 @@ ggplot() +
 ```
 
 ### Interactive maps
-```{r leeaflet, include=TRUE, message=TRUE, warning=FALSE, paged.print=FALSE}
+```{r leeaflet, eval=FALSE, message=TRUE, warning=FALSE, include=FALSE, paged.print=FALSE}
 leaflet() %>% 
   addTiles(group = "Default") %>%
   addCircleMarkers(data = puffyshark, 
@@ -105,8 +95,8 @@ leaflet() %>%
                    color = "#422CB2")
 ```
 
-### Maybe even trying to layer this?
-```{r leaflet overlay, echo=FALSE, include=TRUE, message=TRUE, warning=FALSE, paged.print=FALSE}
+#### With layering
+```{r leaflet overlay, echo=TRUE, message=TRUE, warning=FALSE, paged.print=FALSE}
 leaflet() %>% 
   addTiles(group = "Default") %>%
   addCircleMarkers(data = puffyshark, 
@@ -123,8 +113,8 @@ leaflet() %>%
                    color = "#422CB2")
 ```
 
-### Different interactive maps
-```{r mapview, echo=FALSE, include=TRUE, message=TRUE, warning=FALSE, paged.print=FALSE}
+### Different interactive maps - not working
+```{r mapview, eval=FALSE, message=TRUE, warning=FALSE, include=FALSE, paged.print=FALSE}
 #mapview(puffyshark, 
         #popup = 
          # popupTable(puffyshark, 
