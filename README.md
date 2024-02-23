@@ -25,3 +25,5 @@ The chosen sharks are the Puffadder shyshark and the dark shyshark. There are tw
 <br>
 "loceanshark_ds" <- dark shyshark observations with link to iNat 
 <br>
+  
+![giphy](https://github.com/NosyShark/ShysharkWebsite/assets/159799076/766b5ce7-8313-46ce-a59b-6bc55c09b34a)
