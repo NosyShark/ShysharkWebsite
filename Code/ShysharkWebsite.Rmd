@@ -141,4 +141,4 @@ mapview(oceanshark_ds, col.regions = "#422CB2", layer.name = "Dark shyshark", le
                      zcol = c("user_login", "click_url", "id")))
 ```
 
-~~ This RMarkdown was made with lots of crying and swearing by the author but hopefully it will be appreciated~~
+~~This RMarkdown was made with lots of crying and swearing by the author but hopefully it will be appreciated~~
