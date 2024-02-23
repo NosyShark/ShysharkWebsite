@@ -130,7 +130,7 @@ loceanshark_ds <- oceanshark_ds %>%
 
 Finally! Let's create an interactive map with links to each point's iNaturalist observation! 
 
-```{r mapview of both spp with links, echo=TRUE}
+```{r mapview of both spp with links, message=FALSE, warning=FALSE, paged.print=FALSE}
 mapview(oceanshark_ps, col.regions = "#85B22C", layer.name = "Puffadder shyshark", legend = TRUE,
         popup = 
           popupTable(loceanshark_ps,
