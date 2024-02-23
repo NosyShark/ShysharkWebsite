@@ -25,7 +25,7 @@ lapply(my_packages, require, character.only = TRUE)
 
 ```{r note, eval=FALSE, include=FALSE}
 ## Note: After going through this process once and using mapview to evaluate how many sharks were observed on land I have decided to remove brown shysharks from the analysis as most of the observations were "land sharks". All code including brown shyshark data has been removed from here on out. 
-# Also just gonna call pbsouthwood out for a second because *almost all* of their observations of shysharks were on land. *frustrated noises* 
+# Also just gonna call pbsouthwood out for a second, because *almost all* of their observations of shysharks were on land. *frustrated noises* 
 ```
 
 First we need to read in some shyshark data from iNaturalist. 
@@ -40,7 +40,8 @@ Then we need to filter the observations to include only research grade observati
 
 ```{r filtering data, echo=TRUE}
 puffyshark <- puffyshark %>% filter(positional_accuracy < 100 & latitude <0 & !is.na(latitude) & quality_grade == "research")
-darkshark <- darkshark %>% filter(positional_accuracy < 100 & latitude <0 & !is.na(latitude) & quality_grade == "research")
+darkshark <- darkshark %>% 
+  filter(positional_accuracy < 100 & latitude <0 & !is.na(latitude) & quality_grade == "research")
 ```
 
 In order to actually plot these data we need to make the dataframes spatial objects of the class "sf". 
@@ -61,10 +62,11 @@ st_crs(darkshark)
 Nice!! All systems go! 
 
 Let's do some more filtering! We want to exclude observations of **sharks** made **on land** *(shoutout to ChatGPT for the help)*.
-We start by creating a dataframe for the land surface.
+We start by creating a dataframe for the land surface and checking the CRS matches our other dataframes.
 
 ```{r creating df for land, echo=TRUE}
 world_land <- ne_countries(scale = "medium", returnclass = "sf", country = "south africa")
+st_crs(world_land)
 ```
 
 Now we want to spatially join this df to ID the observations on land for the sharks and create new dataframes *without those observations*. 
