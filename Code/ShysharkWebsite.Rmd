@@ -5,11 +5,11 @@ date: "2024-02-23"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
+This is a GIS on shyshark distribution around southern Africa. 
+Shysharks are endemic benthic species found around the southern African coastline. There are four species (*Haploblepharus edwardsii*, *H. pictus*, *H. fuscus*, and *H. kistnasamyi*). As the latter two are quite criptic, this visual representation will focus on the observations made of Happy Eddies or Puffadder shysharks (*H. edwardsii*) and Dark shysharks (*H. pictus*).
 
-# This is the GIS in R workshop with Jasper
+To run the code you will need the packages tidyverse, sp, sf, raster, lwgeom, terra, stars, exactextractr, hrbrthemes,cowplot, rinat, prettymapr, ggspatial, leaflet, mapview, htmltools, leafpop, rnaturalearth, and rnaturalearthdata. 
+
 ```{r cleaning the space, include=FALSE}
 rm(list=ls())
 ```
@@ -23,42 +23,52 @@ my_packages <- c("tidyverse", "sp", "sf", "raster", "lwgeom", "terra", "stars", 
 lapply(my_packages, require, character.only = TRUE)
 ```
 
-## After going through this process once and using mapview to evaluate how many sharks were observed on land I have decided to remove brown shysharks from the analysis as 5 out of 8 observations were "land sharks" ##
+```{r note, eval=FALSE, include=FALSE}
+## Note: After going through this process once and using mapview to evaluate how many sharks were observed on land I have decided to remove brown shysharks from the analysis as most of the observations were "land sharks". All code including brown shyshark data has been removed from here on out. 
+# Also just gonna call pbsouthwood out for a second because *almost all* of their observations of shysharks were on land. *frustrated noises* 
+```
 
-# Reading in data from iNaturalist
+First we need to read in some shyshark data from iNaturalist. 
+
 ```{r reading in iNat data, echo=TRUE}
 puffyshark <- get_inat_obs(taxon_name = "Haploblepharus edwardsii", maxresults = 600)
 darkshark <- get_inat_obs(taxon_name = "Haploblepharus pictus", maxresults = 600)
 ```
 
 
-# Filtering observations to research grade
+Then we need to filter the observations to include only research grade observations and observations with a positional accuracy less than 100m, we also exclude faulty observations made in the Northern Hemisphere and all data with NA latitude values. 
+
 ```{r filtering data, echo=TRUE}
 puffyshark <- puffyshark %>% filter(positional_accuracy < 100 & latitude <0 & !is.na(latitude) & quality_grade == "research")
 darkshark <- darkshark %>% filter(positional_accuracy < 100 & latitude <0 & !is.na(latitude) & quality_grade == "research")
 ```
 
-# Make the dataframes spatial objects of class = "sf"
+In order to actually plot these data we need to make the dataframes spatial objects of the class "sf". 
+
 ```{r transform into sf, echo=TRUE}
 puffyshark <- st_as_sf(puffyshark, coords = c("longitude", "latitude"), crs = 4326)
 darkshark <- st_as_sf(darkshark, coords = c("longitude", "latitude"), crs = 4326)
 ```
 
-# Check the data
+Very important!! We need to check the dataframes to make sure they've been transformed into spatial objects and check that the coordinate reference systems (CRS) are the same. 
+
 ```{r echo=TRUE}
 class(puffyshark)
-class(darkshark) # all gucci
+class(darkshark)
 st_crs(puffyshark)
-st_crs(darkshark) # yay! all of them are 4326!
+st_crs(darkshark)
 ```
+Nice!! All systems go! 
 
-# Some more filtering -> I want to exclude observations of *sharks* made *on land* (shoutout to ChatGPT for the help)
-# Getting land area (to exclude observations on land)
+Let's do some more filtering! We want to exclude observations of **sharks** made **on land** *(shoutout to ChatGPT for the help)*.
+We start by creating a dataframe for the land surface.
+
 ```{r creating df for land, echo=TRUE}
 world_land <- ne_countries(scale = "medium", returnclass = "sf", country = "south africa")
 ```
 
-# Spatial join to ID observations on land for puffies
+Now we want to spatially join this df to ID the observations on land for the sharks and create new dataframes *without those observations*. 
+
 ```{r remove landshark observations, echo=TRUE}
 landsharks_ps <- st_join(puffyshark, world_land, join = st_disjoint) %>%
   filter(!is.na(iso_a2))
@@ -71,7 +81,8 @@ landsharks_ds <- st_join(darkshark, world_land, join = st_disjoint) %>%
 oceanshark_ds <- darkshark[darkshark$geometry %in% landsharks_ds$geometry,]
 ```
 
-# Plot these bois
+Let's see if all that worked by plotting these data.
+
 ```{r plot, echo=TRUE}
 ggplot() + 
   annotation_map_tile(type = "osm", progress = "none") + 
@@ -81,31 +92,18 @@ ggplot() +
   geom_sf(data = oceanshark_ds, color = "#422CB2")
 ```
 
-# Let's try overlay these data
+Hmm. It would be more helpful if both species were on one map...
+
 ```{r overlay plot, echo=TRUE}
 ggplot() + 
   annotation_map_tile(type = "osm", progress = "none") + 
   geom_sf(data = oceanshark_ps, color = "#85B22C") + 
   geom_sf(data = oceanshark_ds, color = "#422CB2")
 ```
+That's better!
 
-# Interactive maps
-```{r leaflet maps, echo=TRUE}
-leaflet() %>% 
-  addTiles(group = "Default") %>%
-  addCircleMarkers(data = oceanshark_ps, 
-                   group = "Haploblepharus edwardsii", 
-                   radius = 1, 
-                   color = "#85B22C")
-leaflet() %>%
-  addTiles(group = "Default") %>%
-  addCircleMarkers(data = oceanshark_ds, 
-                   group = "Haploblepharus pictus", 
-                   radius = 1, 
-                   color = "#422CB2")
-```
+Now the fun part - creating interacive maps with both species! 
 
-# Interactive map for both species
 ```{r both spp leaflet, echo=TRUE}
 leaflet() %>% 
   addTiles(group = "Default") %>%
@@ -120,7 +118,9 @@ leaflet() %>%
   addLegend(position = "topright", colors = c("#85B22C", "#422CB2"), labels = c("Puffadder shyshark", "Dark shyshark"))
 ```
 
-# Creating dataframes with links to iNaturalist observations
+Next we want to create an interactive map with mapview and create popups for each data point with links to the iNaturalist observations. 
+So - first thing's first - let's make the links possible.
+
 ```{r iNat links for mapview, echo=TRUE}
 loceanshark_ps <- oceanshark_ps %>%
   mutate(click_url = paste("<b><a href='", url, "'>Link to iNat observation</a></b>"))
@@ -128,7 +128,8 @@ loceanshark_ds <- oceanshark_ds %>%
   mutate(click_url = paste("<b><a href='", url, "'>Link to iNat observation</a></b>"))
 ```
 
-# Interactive map that has popup links to iNaturalist observations for both species
+Finally! Let's create an interactive map with links to each point's iNaturalist observation! 
+
 ```{r mapview of both spp with links, echo=TRUE}
 mapview(oceanshark_ps, col.regions = "#85B22C", layer.name = "Puffadder shyshark", legend = TRUE,
         popup = 
@@ -138,3 +139,6 @@ mapview(oceanshark_ds, col.regions = "#422CB2", layer.name = "Dark shyshark", le
         popup = 
           popupTable(loceanshark_ds, 
                      zcol = c("user_login", "click_url", "id")))
+```
+
+~~ This RMarkdown was made with lots of crying and swearing by the author but hopefully it will be appreciated~~
